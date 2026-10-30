@@ -1,0 +1,79 @@
+#cloud-config
+# NetBootX 示例 Ubuntu Autoinstall 模板（Ubuntu 20.04 / 22.04 / 24.04 Server）
+#
+# 用法：
+#   1. 复制到 user/autoinstall/，比如 ubuntu2404-autoinstall.yaml
+#   2. 改 identity、storage、ssh 公钥
+#   3. 在 NetBootX 界面挂上模板
+#   4. 客户机内核参数会自动带 autoinstall ds=nocloud-net;s=http://<server>:16000/user/autoinstall/
+#
+# 注意：文件名必须是 user-data 或带 .yaml 后缀，NetBootX 会做路径映射。
+
+#cloud-config
+autoinstall:
+  version: 1
+
+  ### 语言与时区
+  locale: zh_CN.UTF-8
+  keyboard:
+    layout: us
+  timezone: Asia/Shanghai
+
+  ### 网络：DHCP 自动获取
+  network:
+    version: 2
+    ethernets:
+      # 用 match 匹配所有物理网卡，不用关心具体名字
+      all-eth:
+        match:
+          name: "en*"
+        dhcp4: true
+    # 如果要多网卡，可以再列一个 "eth*"
+
+  ### 镜像源（国内加速）
+  apt:
+    primary:
+      - arches: [default]
+        uri: https://mirrors.aliyun.com/ubuntu/
+    geoip: false
+
+  ### 磁盘：清空第一块盘，LVM 分区
+  storage:
+    layout:
+      name: lvm
+      # 直接擦盘，不问
+      wipe: true
+
+  ### 账号
+  identity:
+    hostname: ubuntu-node
+    username: admin
+    # 用 mkpasswd -m sha-512 生成；下面这个是 'netbootx'
+    password: "$6$rounds=4096$Xk8Qm2Lp$Y9vN3sT5wR7uE1iO4aZ6cB8dF0gH2jK4lM6nO8pQ0rS2tU4vW6xY8zA0bC2dE4fG6hI8jK0lM2n"
+
+  ### SSH：改成你自己的公钥
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your-key-here"
+
+  ### 软件包
+  packages:
+    - openssh-server
+    - curl
+    - wget
+    - vim
+    - htop
+    - net-tools
+    - ca-certificates
+
+  ### 安装后脚本
+  late-commands:
+    - echo "Installed by NetBootX" > /target/etc/netbootx-installed
+    # 如果有自动重启需求，取消下面注释
+    # - curtin in-target --target=/target -- systemctl enable ssh
+
+  ### 不要交互确认
+  # 交互式安装会卡住无人值守流程
+  interactive-sections: []

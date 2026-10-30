@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go: ['1.24', '1.25']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Download boot files
+        shell: bash
+        run: ./scripts/fetch-boot.sh || echo "引导文件下载失败（不影响单元测试）"
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Check formatting
+        shell: bash
+        run: |
+          unformatted=$(gofmt -l internal main.go)
+          if [ -n "$unformatted" ]; then
+            echo "以下文件未格式化："
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Test
+        run: go test ./... -count=1 -timeout 300s
+
+      - name: Test with race detector
+        if: runner.os == 'Linux'
+        run: go test ./... -race -count=1 -timeout 300s
+
+  cross-build:
+    name: Cross compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - name: Build all platforms
+        run: |
+          set -e
+          for target in \
+            linux/amd64 linux/arm64 \
+            darwin/amd64 darwin/arm64 \
+            windows/amd64 windows/arm64; do
+            GOOS=${target%/*} GOARCH=${target#*/} go build -trimpath -ldflags "-s -w" -o /tmp/netbootx-${target%/*}-${target#*/} .
+            echo "✅ $target"
+          done
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check JS syntax
+        run: node --check internal/web/assets/app.js
+      - name: Run DOM behavior tests
+        run: node internal/web/testdata/dom_test.mjs internal/web/assets

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#0f1419" />
+<meta name="description" content="NetBootX 网络引导服务器管理控制台" />
+<title>NetBootX · 网络引导服务器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%278%27%20fill%3D%27%230f1419%27%2F%3E%3Cpath%20d%3D%27M7%2023h18M16%207l7%208-7%208%27%20stroke%3D%27%233cb5bc%27%20stroke-width%3D%273%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fsvg%3E" />
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<!-- 内联 SVG 图标库：不请求任何外部资源 -->
+<svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <symbol id="i-logo" viewBox="0 0 24 24">
+    <path d="M3 17h18M12 4l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="5" cy="7" r="1.6" fill="currentColor"/>
+    <circle cx="19" cy="7" r="1.6" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-power" viewBox="0 0 24 24">
+    <path d="M12 3v9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M6.5 6.8a8 8 0 1 0 11 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24">
+    <rect x="6" y="6" width="12" height="12" rx="2.2" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24">
+    <path d="M20 12a8 8 0 1 1-2.4-5.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24">
+    <path d="M12 16V4m0 0L7 9m5-5 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24">
+    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24">
+    <path d="M4 7h16M9 7V4.8A.8.8 0 0 1 9.8 4h4.4a.8.8 0 0 1 .8.8V7M6.5 7l.8 12a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9l.8-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-disc" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24">
+    <rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M9 20h6M12 16.5V20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24">
+    <rect x="3" y="4.5" width="18" height="15" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M7.5 9.5 10.5 12l-3 2.5M12.5 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24">
+    <path d="M5 12.5 10 17.5 19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24">
+    <rect x="8.5" y="8.5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M15.5 5.5A2 2 0 0 0 13.5 4H6a2 2 0 0 0-2 2v7.5a2 2 0 0 0 1.5 1.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24">
+    <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24">
+    <path d="M12 4.5 21 19.5H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M12 10v4.5M12 17.2v.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24">
+    <path d="M5 12h13m0 0-5-5m5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<div class="app">
+
+  <!-- 顶部：品牌 + 实时状态 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-logo"><svg class="icon"><use href="#i-logo"/></svg></span>
+      <span class="brand-text">
+        <strong>NetBootX</strong>
+        <small>网络引导服务器</small>
+      </span>
+      <span class="badge" id="versionBadge">v—</span>
+    </div>
+
+    <div class="topbar-right">
+      <span class="pill" id="statusPill" data-state="unknown">
+        <span class="dot"></span>
+        <span id="statusText">连接中…</span>
+      </span>
+      <span class="meta" id="metaHost" title="主机名">—</span>
+      <span class="meta" id="metaPorts" title="服务端口">—</span>
+      <span class="meta" id="metaUptime" title="运行时长">—</span>
+      <span class="conn" id="connState" data-state="connecting" title="实时连接状态">
+        <span class="conn-dot"></span><span id="connText">实时连接中</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- 控制栏：本机 IP / 地址池 / 大启动按钮 / 快捷操作 -->
+  <section class="controlbar card">
+    <div class="control-fields">
+      <div class="field">
+        <label for="ifaceSelect">本机 IP</label>
+        <div class="select-wrap">
+          <select id="ifaceSelect" aria-label="选择本机网卡 IP">
+            <option value="">加载中…</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field field-range">
+        <label for="rangeStart">IP 地址池</label>
+        <div class="range-row">
+          <input id="rangeStart" type="text" inputmode="decimal" autocomplete="off" placeholder="192.168.123.200" aria-label="地址池起始 IP" />
+          <span class="range-sep">—</span>
+          <input id="rangeEnd" type="text" inputmode="decimal" autocomplete="off" placeholder="192.168.123.250" aria-label="地址池结束 IP" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="dhcpMode">DHCP 模式</label>
+        <div class="select-wrap">
+          <select id="dhcpMode" aria-label="DHCP 工作模式">
+            <option value="proxy">代理模式（已有 DHCP）</option>
+            <option value="full">完整模式（本机分配 IP）</option>
+            <option value="external">外部模式（只提供文件）</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-ghost" id="saveConfigBtn" type="button">
+        <svg class="icon"><use href="#i-check"/></svg>保存配置
+      </button>
+    </div>
+
+    <div class="power-wrap">
+      <button class="btn-power" id="powerBtn" type="button" data-state="stopped">
+        <span class="btn-power-icon">
+          <svg class="icon icon-play"><use href="#i-power"/></svg>
+          <svg class="icon icon-stop"><use href="#i-stop"/></svg>
+        </span>
+        <span class="btn-power-text">启动服务</span>
+      </button>
+      <span class="power-hint" id="powerHint">服务已停止，点击启动 PXE 服务</span>
+    </div>
+
+    <div class="control-actions">
+      <button class="btn btn-soft" id="uploadBtn" type="button">
+        <svg class="icon"><use href="#i-upload"/></svg>上传 ISO
+      </button>
+      <button class="btn btn-soft" id="rescanBtn" type="button">
+        <svg class="icon"><use href="#i-refresh"/></svg>重新扫描
+      </button>
+      <input type="file" id="fileInput" accept=".iso,application/x-iso9660-image" multiple hidden />
+    </div>
+  </section>
+
+  <!-- 三栏主面板 -->
+  <main class="panels">
+
+    <section class="panel card" id="panelIsos">
+      <header class="panel-head">
+        <h2>
+          <svg class="icon"><use href="#i-disc"/></svg>
+          ISO 镜像
+          <span class="count" id="isoCount">0</span>
+        </h2>
+        <div class="panel-tools">
+          <input class="search" id="isoSearch" type="search" placeholder="筛选镜像…" aria-label="筛选 ISO 镜像" />
+        </div>
+      </header>
+      <div class="panel-body" id="isoList">
+        <div class="empty" data-kind="loading">正在加载镜像列表…</div>
+      </div>
+    </section>
+
+    <section class="panel card" id="panelClients">
+      <header class="panel-head">
+        <h2>
+          <svg class="icon"><use href="#i-monitor"/></svg>
+          客户机
+          <span class="count" id="clientCount">0</span>
+        </h2>
+        <div class="panel-tools">
+          <button class="btn btn-tiny" id="clearClientsBtn" type="button" title="清空客户机列表">
+            <svg class="icon"><use href="#i-trash"/></svg>清空
+          </button>
+        </div>
+      </header>
+      <div class="panel-body" id="clientList">
+        <div class="empty" data-kind="loading">正在加载客户机…</div>
+      </div>
+    </section>
+
+    <section class="panel card" id="panelLogs">
+      <header class="panel-head">
+        <h2>
+          <svg class="icon"><use href="#i-terminal"/></svg>
+          运行日志
+          <span class="count" id="logCount">0</span>
+        </h2>
+        <div class="panel-tools">
+          <label class="switch" title="新日志到达时自动滚动到底部">
+            <input type="checkbox" id="autoScroll" checked />
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-label">跟随</span>
+          </label>
+          <button class="btn btn-tiny" id="clearLogsBtn" type="button" title="清空日志面板（不影响服务端）">
+            <svg class="icon"><use href="#i-trash"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="panel-body log-body" id="logList" role="log" aria-live="polite">
+        <div class="empty" data-kind="loading">正在加载日志…</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- 提示条 -->
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<!-- iPXE 脚本预览弹窗 -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal-head">
+      <div>
+        <h2 id="modalTitle">iPXE 启动脚本预览</h2>
+        <p class="modal-sub" id="modalSub">—</p>
+      </div>
+      <button class="btn-icon" id="modalClose" type="button" aria-label="关闭">
+        <svg class="icon"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <div class="modal-meta" id="modalMeta"></div>
+    <div class="modal-code-wrap">
+      <pre class="code" id="modalCode"><code>加载中…</code></pre>
+    </div>
+    <footer class="modal-foot">
+      <span class="hint" id="modalHint"></span>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCopy" type="button">
+          <svg class="icon"><use href="#i-copy"/></svg>复制脚本
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<noscript>
+  <div class="noscript">NetBootX 管理界面需要启用 JavaScript 才能使用。</div>
+</noscript>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

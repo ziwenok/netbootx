@@ -1,0 +1,40 @@
+# ---- 构建产物 ----
+bin/
+dist/
+*.exe
+*.test
+*.out
+
+# ---- 本地工具链与缓存（体积大，不进版本库）----
+.tools/
+
+# ---- 运行时数据 ----
+data/
+log/
+data/settings.json
+
+# ---- ISO 镜像（用户自己放，体积大）----
+iso/*.iso
+iso/**/*.iso
+!iso/.gitkeep
+
+# ---- 引导文件（第三方二进制，由 scripts/fetch-boot.sh 下载）----
+# 不把 iPXE / wimboot 的二进制提交进仓库：体积大、有各自的许可证、
+# 且随时可能更新。用 ./scripts/fetch-boot.sh 一键获取。
+boot/**/*.efi
+boot/**/*.kpxe
+boot/**/*.pxe
+boot/wimboot
+!boot/.gitkeep
+
+# ---- 用户生成 ----
+user/autoinstall/*.generated
+user/autoinstall/*.local.*
+
+# ---- 系统 ----
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
